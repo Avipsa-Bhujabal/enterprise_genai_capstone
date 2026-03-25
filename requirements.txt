@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+python-multipart
+streamlit
+openai
+chromadb
+sentence-transformers
+pypdf
+pandas
+openpyxl
+xlrd
+python-dotenv
+pydantic
+httpx
+pytest
+pydantic-settings

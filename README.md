@@ -1,201 +1,148 @@
-# Enterprise Document Q&A with Agentic RAG
+# 🧠 Enterprise Document Q&A using Gemini + Agentic RAG
 
-A capstone-ready Generative AI application that lets users upload enterprise documents and ask natural-language questions. The system ingests PDF, TXT, CSV, and Excel files, chunks content for semantic search, stores embeddings in a vector database, retrieves relevant context, and uses an LLM to generate grounded answers.
+## 🚀 Overview
+This project is a **Generative AI-powered knowledge and decision support system** that allows users to query enterprise documents using natural language.
 
-The project also includes a lightweight agentic workflow with four stages:
-- **Planner agent**: interprets the question and creates a retrieval plan
-- **Retriever agent**: fetches the most relevant chunks from the vector store
-- **Reasoner agent**: drafts an answer grounded in retrieved evidence
-- **Validator agent**: checks the draft for missing citations, unsupported claims, and empty-context cases
+It combines:
+- **Google Gemini (LLMs + Embeddings)**
+- **Retrieval-Augmented Generation (RAG)**
+- **Agentic AI Workflow (Planner → Retriever → Reasoner → Verifier)**
 
-## Architecture
+The system enables users to upload documents (PDF, TXT, CSV, Excel) and get **accurate, grounded, and context-aware answers**.
 
-```text
-Streamlit UI / REST Client
-        |
-        v
-     FastAPI API
-        |
-        +--> Document Loader (PDF/TXT/CSV/XLSX)
-        +--> Chunker
-        +--> Embedding Model
-        +--> Chroma Vector Store
-        +--> Agentic RAG Orchestrator
-                |- Planner
-                |- Retriever
-                |- Reasoner
-                |- Validator
+---
+
+## ✨ Features
+- 📄 Multi-format document ingestion (PDF, TXT, CSV, Excel)
+- 🔍 Semantic search using embeddings
+- 🧩 Intelligent chunking for better retrieval
+- 🤖 Agent-based reasoning pipeline:
+  - Planner Agent
+  - Retriever Agent
+  - Reasoning Agent
+  - Verifier Agent
+- 📊 Streamlit UI for interaction
+- 📚 Source-grounded answers with citations
+
+---
+
+## 🏗️ Architecture
+
+```
+User Query
+   ↓
+Planner Agent → Defines intent
+   ↓
+Retriever Agent → Fetches relevant chunks
+   ↓
+Reasoning Agent → Generates grounded answer
+   ↓
+Verifier Agent → Validates and refines output
+   ↓
+Final Answer (with citations)
 ```
 
-## Features
-- Upload PDF, TXT, CSV, XLSX, XLS files
-- Parse structured and unstructured documents
-- Chunk documents with metadata
-- Create embeddings and persist them in Chroma
-- Similarity-based retrieval for semantic search
-- LLM-based grounded answering with citations
-- Agent-style reasoning flow for task planning and validation
-- Safety controls for empty retrieval, unsupported file types, and prompt injection cues
-- Streamlit UI for quick demos
-- Docker support for local deployment
+---
 
-## Tech Stack
-- **Backend:** FastAPI
+## ⚙️ Tech Stack
+- **LLM & Embeddings:** Google Gemini
 - **Frontend:** Streamlit
-- **Vector DB:** Chroma
-- **Embeddings:** SentenceTransformers (`all-MiniLM-L6-v2`)
-- **LLM:** OpenAI-compatible chat model via the `openai` Python SDK
-- **Parsing:** PyPDF, pandas, openpyxl
+- **Data Processing:** Pandas, NumPy
+- **Document Parsing:** PyPDF, CSV, Excel
+- **Environment Management:** python-dotenv
 
-## Project Structure
+---
 
-```text
-enterprise_genai_capstone/
-├── backend/
-│   └── app/
-│       ├── api/
-│       │   └── routes.py
-│       ├── core/
-│       │   ├── config.py
-│       │   └── logging.py
-│       ├── models/
-│       │   └── schemas.py
-│       ├── services/
-│       │   ├── agents.py
-│       │   ├── chunking.py
-│       │   ├── ingestion.py
-│       │   ├── llm.py
-│       │   ├── rag.py
-│       │   └── vector_store.py
-│       └── main.py
-├── frontend/
-│   └── streamlit_app.py
-├── data/
-│   ├── chroma_db/
-│   └── uploads/
-├── tests/
-│   └── test_smoke.py
-├── .env.example
-├── docker-compose.yml
-├── Dockerfile.api
-├── Dockerfile.ui
-├── requirements.txt
-└── README.md
-```
+## 📦 Installation
 
-## Setup
-
-### 1) Create and activate a virtual environment
-
-**Windows PowerShell**
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-**macOS / Linux**
+### 1. Clone the repository
 ```bash
-python -m venv .venv
-source .venv/bin/activate
+git clone <your-repo-url>
+cd <your-repo-name>
 ```
 
-### 2) Install dependencies
+### 2. Install dependencies
 ```bash
-pip install -r requirements.txt
+pip install streamlit google-genai pypdf pandas openpyxl numpy python-dotenv
 ```
 
-### 3) Configure environment variables
-Copy `.env.example` to `.env` and fill in your values.
+### 3. Setup environment variables
+Create a `.env` file in the root directory:
+```env
+GEMINI_API_KEY=your_api_key_here
+```
 
+---
+
+## ▶️ Run the Application
 ```bash
-cp .env.example .env
+streamlit run app.py
 ```
 
-Required:
-- `OPENAI_API_KEY`
-
-Optional:
-- `OPENAI_MODEL` (default: `gpt-4o-mini`)
-- `OPENAI_BASE_URL` for OpenAI-compatible providers
-- `CHROMA_PERSIST_DIR`
-- `TOP_K`
-- `CHUNK_SIZE`
-- `CHUNK_OVERLAP`
-
-## Run Locally
-
-### Start the API
-```bash
-uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000
+Then open:
+```
+http://localhost:8501
 ```
 
-### Start the UI
-```bash
-streamlit run frontend/streamlit_app.py
-```
+---
 
-UI default URL:
-- `http://localhost:8501`
+## 🧪 How It Works
 
-API docs:
-- `http://localhost:8000/docs`
+### 1. Upload Documents
+Users upload enterprise files (PDF, CSV, Excel, TXT).
 
-## API Endpoints
+### 2. Document Processing
+- Extract text
+- Clean and chunk data
+- Generate embeddings using Gemini
 
-### Health check
-```http
-GET /health
-```
+### 3. Query Processing
+- User asks a question
+- Planner agent determines intent
+- Retriever finds relevant chunks
 
-### Ingest documents
-```http
-POST /api/v1/ingest
-Content-Type: multipart/form-data
-files: [file1, file2, ...]
-```
+### 4. Response Generation
+- LLM generates answer using retrieved context
+- Verifier ensures accuracy and grounding
 
-### Ask a question
-```http
-POST /api/v1/ask
-{
-  "question": "What does the policy say about remote work approvals?",
-  "top_k": 4
-}
-```
+---
 
-## Reliability & Safety Controls
-- Reject unsupported file types
-- Handle empty files and empty retrieval results gracefully
-- Add provenance metadata to every chunk
-- Instruct the LLM to answer only from retrieved context
-- Return `I don't know` style responses when evidence is insufficient
-- Basic prompt-injection defense by isolating system instructions from user content
+## 📌 Example Use Cases
+- 📊 Business policy Q&A
+- 📄 Contract analysis
+- 📈 Financial document insights
+- 🏢 Enterprise knowledge assistant
 
-## Deployment
+---
 
-### Docker Compose
-```bash
-docker compose up --build
-```
+## ⚠️ Limitations
+- In-memory vector store (not persistent)
+- Performance depends on document size
+- Limited context window for large documents
+- Requires API key for Gemini
 
-Services:
-- API: `http://localhost:8000`
-- UI: `http://localhost:8501`
+---
 
-## Limitations
-- Baseline version uses local semantic search, not hybrid reranking
-- Agent workflow is intentionally lightweight for capstone clarity
-- OCR is not included for scanned PDFs
-- Fine-grained auth and multi-tenant isolation are not included in this starter version
+## 🔮 Future Improvements
+- Add persistent vector database (Chroma / FAISS)
+- Implement chat memory
+- Add authentication (OTP / OAuth)
+- Deploy using Docker or cloud (AWS/GCP)
+- Add evaluation metrics for RAG quality
 
-## Suggested Enhancements
-- Add authentication and per-user document spaces
-- Add hybrid retrieval with BM25 + vector search
-- Add reranking
-- Add evaluation dataset and RAG metrics
-- Add LangGraph for richer agent state transitions
-- Add citations with page-level references for PDFs
-- Add guardrails library integration and moderation
+---
 
-## Resume-Friendly Summary
-Built an agentic RAG application using FastAPI, Streamlit, Chroma, SentenceTransformers, and OpenAI APIs to ingest enterprise documents, retrieve relevant context, and generate grounded answers with autonomous planning, retrieval, reasoning, and validation steps.
+## 💼 Resume Description (ATS Ready)
+
+Developed a Generative AI application using Google Gemini, RAG, and agent-based architecture to enable semantic search and intelligent Q&A over enterprise documents, improving information retrieval accuracy and decision support.
+
+---
+
+## 🙌 Author
+Built as a capstone project for demonstrating **Generative AI, RAG, and Agentic AI systems**.
+
+---
+
+## ⭐ If you like this project
+Give it a star ⭐ and use it in your portfolio!
+

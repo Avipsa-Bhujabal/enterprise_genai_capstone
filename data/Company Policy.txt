@@ -1,0 +1,13 @@
+Company: NexaTech Solutions
+
+Remote Work Policy:
+Employees are allowed to work remotely up to 3 days per week. Full-time remote work requires manager approval.
+
+Leave Policy:
+Employees receive 20 paid leave days annually. Sick leave is capped at 10 days.
+
+Security Policy:
+All employees must use VPN when accessing company systems remotely. Sharing credentials is strictly prohibited.
+
+Expense Policy:
+Employees can claim up to $1000 annually for work-related equipment.
